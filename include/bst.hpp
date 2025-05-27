@@ -177,58 +177,153 @@ class BST {
 };
 
 template <class T>
-BST<T>::TreeNode::TreeNode(const T& value) {}
+BST<T>::TreeNode::TreeNode(const T& value) 
+: data(value), left(nullptr), right(nullptr){}
 
 template <class T>
-BST<T>::TreeNode::~TreeNode() {}
+BST<T>::TreeNode::~TreeNode() {
+  delete left;
+    delete right;
+}
 
 template <class T>
-typename BST<T>::TreeNode* BST<T>::TreeNode::max() {}
+typename BST<T>::TreeNode* BST<T>::TreeNode::max() {
+  TreeNode* current = this;
+    while (current->right)
+        current = current->right;
+    return current;
+}
 
 template <class T>
-typename BST<T>::TreeNode* BST<T>::TreeNode::min() {}
+typename BST<T>::TreeNode* BST<T>::TreeNode::min() {
+   TreeNode* current = this;
+    while (current->left)
+        current = current->left;
+    return current;
+}
 
 template <class T>
-BST<T>::BST() {}
+BST<T>::BST(): root(nullptr) {}
 
 template <class T>
-BST<T>::~BST() {}
+BST<T>::~BST() {
+   delete root;
+}
 
 template <class T>
-bool BST<T>::insert(const T& value) {}
+bool BST<T>::insert(const T& value) {
+   return insert(root, value);
 
 template <class T>
-bool BST<T>::remove(const T& value) {}
+bool BST<T>::remove(const T& value) {
+   return remove(root, value);
+}
+}
 
 template <class T>
-bool BST<T>::contain(const T& value) const {}
+bool BST<T>::contain(const T& value) const {
+   return contain(root, value);
+}
 
 template <class T>
-bool BST<T>::insert(TreeNode*& node, const T& value) {}
+bool BST<T>::insert(TreeNode*& node, const T& value) {
+  if (!node) {
+        node = new TreeNode(value);
+        return true;
+    }
+    if (value < node->data)
+        return insert(node->left, value);
+    else if (value > node->data)
+        return insert(node->right, value);
+    return false;
+}
 
 template <class T>
-bool BST<T>::contain(const TreeNode* const node, const T& value) const {}
+bool BST<T>::contain(const TreeNode* const node, const T& value) const {
+   if (!node) return false;
+    if (value < node->data)
+        return contain(node->left, value);
+    else if (value > node->data)
+        return contain(node->right, value);
+    return true;
+}
 
 template <class T>
-bool BST<T>::remove(TreeNode*& node, const T& value) {}
+bool BST<T>::remove(TreeNode*& node, const T& value) {
+  if (!node) return false;
+
+    if (value < node->data)
+        return remove(node->left, value);
+    else if (value > node->data)
+        return remove(node->right, value);
+    else {
+        if (!node->left && !node->right) {
+            delete node;
+            node = nullptr;
+        } else if (node->left && !node->right) {
+            TreeNode* temp = node;
+            node = node->left;
+            temp->left = nullptr;
+            delete temp;
+        } else if (!node->left && node->right) {
+            TreeNode* temp = node;
+            node = node->right;
+            temp->right = nullptr;
+            delete temp;
+        } else {
+            TreeNode* minNode = node->right->min();
+            node->data = minNode->data;
+            remove(node->right, minNode->data);
+        }
+        return true;
+      }
+}
 
 template <class T>
 void BST<T>::in_order(const TreeNode* const node,
-                      std::vector<T>& result) const {}
+                      std::vector<T>& result) const {
+ if (!node) return;
+    in_order(node->left, result);
+    result.push_back(node->data);
+    in_order(node->right, result);
+   }
 
 template <class T>
-std::vector<T> BST<T>::in_order() const {}
+std::vector<T> BST<T>::in_order() const {
+  std::vector<T> result;
+    in_order(root, result);
+    return result;
+
+}
 
 template <class T>
 void BST<T>::pre_order(const TreeNode* const node,
-                       std::vector<T>& result) const {}
+                       std::vector<T>& result) const {
+if (!node) return;
+    result.push_back(node->data);
+    pre_order(node->left, result);
+    pre_order(node->right, result);
+                       }
 
 template <class T>
-std::vector<T> BST<T>::pre_order() const {}
+std::vector<T> BST<T>::pre_order() const {
+   std::vector<T> result;
+    pre_order(root, result);
+    return result;
+}
 
 template <class T>
 void BST<T>::post_order(const TreeNode* const node,
-                        std::vector<T>& result) const {}
+                        std::vector<T>& result) const {
+if (!node) return;
+    post_order(node->left, result);
+    post_order(node->right, result);
+    result.push_back(node->data);                          
+                        }
 
 template <class T>
-std::vector<T> BST<T>::post_order() const {}
+std::vector<T> BST<T>::post_order() const {
+    std::vector<T> result;
+    post_order(root, result);
+    return result;
+}
