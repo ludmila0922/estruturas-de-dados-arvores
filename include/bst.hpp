@@ -193,7 +193,8 @@ class BST {
    * @return Ponteiro para o nodo ou nullptr se o valor não estiver na árvore.
    */
   TreeNode* find_node(const T& value) const { return find_node(root, value); }
-
+  T* search(const T& value);
+  const T* search(const T& value) const;
  private:
   TreeNode* root;  ///< Ponteiro para a raiz da árvore.
 };
@@ -225,7 +226,6 @@ typename BST<T>::TreeNode* BST<T>::TreeNode::min() {
  }
  return current;
 }
-
 template <class T>
 BST<T>::BST(): root{nullptr} {}
 
@@ -369,4 +369,15 @@ std::vector<T> BST<T>::post_order() const {
     std::vector<T> result;
     post_order(root, result);
     return result;
+}
+template <class T>
+T* BST<T>::search(const T& value) {
+  typename BST<T>::TreeNode* node = find_node(root, value);
+  return node ? &node->data : nullptr;
+}
+
+template <class T>
+const T* BST<T>::search(const T& value) const {
+  typename BST<T>::TreeNode* node = find_node(root, value);
+  return node ? &node->data : nullptr;
 }
